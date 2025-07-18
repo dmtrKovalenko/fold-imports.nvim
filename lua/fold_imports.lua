@@ -122,7 +122,6 @@ local function get_parser_for_language(bufnr, lang_config)
   return nil, nil
 end
 
--- Check if a line is empty or only whitespace
 local function is_empty_line(bufnr, line_nr)
   local line = vim.api.nvim_buf_get_lines(bufnr, line_nr - 1, line_nr, false)[1]
   if not line then
@@ -131,7 +130,6 @@ local function is_empty_line(bufnr, line_nr)
   return line:match("^%s*$") ~= nil
 end
 
--- Check if there are only empty lines between two line numbers
 local function only_empty_lines_between(bufnr, start_line, end_line)
   if start_line >= end_line then
     return true
@@ -145,12 +143,6 @@ local function only_empty_lines_between(bufnr, start_line, end_line)
   return true
 end
 
--- Check if a range is contained within another range
-local function is_contained_in(inner_range, outer_range)
-  return inner_range[1] >= outer_range[1] and inner_range[2] <= outer_range[2]
-end
-
--- Get existing folds in buffer
 local function get_existing_folds(bufnr)
   local folds = {}
   local line_count = vim.api.nvim_buf_line_count(bufnr)
@@ -214,7 +206,6 @@ local function group_imports_ignore_empty_lines(bufnr, import_ranges)
   -- Single pass: filter, sort, and deduplicate in one optimized loop
   local processed_ranges = {}
 
-  -- Filter large ranges and sort in one pass
   for _, range in ipairs(import_ranges) do
     local line_count = range[2] - range[1] + 1
     if line_count <= config.max_import_lines then
@@ -231,19 +222,17 @@ local function group_imports_ignore_empty_lines(bufnr, import_ranges)
     return a[1] < b[1]
   end)
 
-  -- Single-pass deduplication: since sorted, only check against previous range
   local final_ranges = { processed_ranges[1] }
   for i = 2, #processed_ranges do
     local current = processed_ranges[i]
     local previous = final_ranges[#final_ranges]
 
-    -- Skip if current is contained in previous (since sorted, we only need to check the last one)
+    -- Skip if current is contained in previous (its sorted, we only need to check the last one)
     if not (current[1] >= previous[1] and current[2] <= previous[2]) then
       table.insert(final_ranges, current)
     end
   end
 
-  -- Single-pass grouping with early termination
   if #final_ranges == 0 then
     return {}
   end
@@ -289,7 +278,7 @@ local function debug_treesitter_matches(bufnr, lang_config, parser_name)
     local ok_query, query = pcall(vim.treesitter.query.parse, parser_name, query_string)
     if ok_query and query then
       local count = 0
-      for id, node, metadata in query:iter_captures(root, bufnr) do
+      for _, node, _ in query:iter_captures(root, bufnr) do
         if node and node.range then
           local ok_range, start_row, start_col, end_row, end_col = pcall(node.range, node)
           if ok_range then
@@ -330,7 +319,6 @@ local function is_parser_ready(bufnr, lang_config)
     return false
   end
 
-  -- Additional check: make sure we can actually query the tree
   local tree = trees[1]
   local root = tree:root()
   if not root then
@@ -340,7 +328,6 @@ local function is_parser_ready(bufnr, lang_config)
   return true, parser, parser_name
 end
 
--- Core folding function with retry mechanism
 local function fold_imports_for_buffer(attempts)
   attempts = attempts or 5 -- Default to 5 attempts
   local bufnr = vim.api.nvim_get_current_buf()
@@ -368,6 +355,10 @@ local function fold_imports_for_buffer(attempts)
     return
   end
 
+  if parser == nil or parser_name == nil then
+    return
+  end
+
   local ok_parse, trees = pcall(parser.parse, parser)
   if not ok_parse or not trees or #trees == 0 then
     return
@@ -382,7 +373,7 @@ local function fold_imports_for_buffer(attempts)
   for _, query_string in ipairs(lang_config.queries) do
     local ok_query, query = pcall(vim.treesitter.query.parse, parser_name, query_string)
     if ok_query and query then
-      for id, node, metadata in query:iter_captures(root, bufnr) do
+      for _, node, _ in query:iter_captures(root, bufnr) do
         if node and node.range then
           local ok_range, start_row, _, end_row, _ = pcall(node.range, node)
           if ok_range and start_row and end_row then
@@ -447,7 +438,6 @@ local function get_all_filetypes()
   return filetypes
 end
 
--- Setup autocommands
 local function setup_autocommands()
   if fold_imports_group then
     vim.api.nvim_del_augroup_by_id(fold_imports_group)
@@ -574,7 +564,6 @@ function M._get_fold_text()
     return string.format("+%s %s ", string.rep(fill_char, 2), fold_text)
       .. string.rep(fill_char, math.max(0, fill_count))
   else
-    -- Fall back to default foldtext for non-import folds
     return vim.fn.foldtext()
   end
 end
