@@ -17,7 +17,7 @@ describe("fold-imports plugin", function()
       plugin.setup({
         enabled = false,
         max_import_lines = 100,
-        custom_fold_text = false
+        custom_fold_text = false,
       })
       -- Should not error
       assert.is_not_nil(plugin)
@@ -25,7 +25,7 @@ describe("fold-imports plugin", function()
 
     it("should create user commands", function()
       plugin.setup()
-      
+
       -- Check if commands exist
       local commands = vim.api.nvim_get_commands({})
       assert.is_not_nil(commands.FoldImports)
@@ -37,12 +37,12 @@ describe("fold-imports plugin", function()
   describe("JavaScript/TypeScript folding", function()
     it("should fold simple import statements", function()
       -- Skip if javascript parser is not available
-      local has_js_parser = pcall(vim.treesitter.get_parser, 0, 'javascript')
+      local has_js_parser = pcall(vim.treesitter.get_parser, 0, "javascript")
       if not has_js_parser then
         pending("javascript treesitter parser not available")
         return
       end
-      
+
       -- Create a buffer with JavaScript content
       local bufnr = vim.api.nvim_create_buf(false, true)
       vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {
@@ -52,38 +52,38 @@ describe("fold-imports plugin", function()
         "",
         "function App() {",
         "  return <div>Hello</div>;",
-        "}"
+        "}",
       })
-      
+
       -- Set filetype and switch to buffer
-      vim.api.nvim_buf_set_option(bufnr, 'filetype', 'javascript')
+      vim.api.nvim_buf_set_option(bufnr, "filetype", "javascript")
       vim.api.nvim_set_current_buf(bufnr)
       vim.api.nvim_set_current_win(vim.api.nvim_open_win(bufnr, true, {
-        relative = 'editor',
+        relative = "editor",
         width = 80,
         height = 10,
         row = 1,
-        col = 1
+        col = 1,
       }))
-      
+
       -- Setup folding manually
       vim.wo.foldmethod = "manual"
       vim.wo.foldenable = true
-      
+
       -- Manually trigger folding with retry
       plugin.fold_imports()
-      
+
       -- Wait longer for async operations and retry mechanism
       vim.wait(500, function()
         return vim.fn.foldclosed(1) ~= -1
       end)
-      
+
       -- Check if imports are folded
       local fold_start = vim.fn.foldclosed(1)
-      
+
       -- Clean up
       vim.api.nvim_buf_delete(bufnr, { force = true })
-      
+
       -- Verify fold was created (more lenient check)
       if fold_start == -1 then
         -- If folding failed, at least verify plugin doesn't crash
@@ -96,39 +96,39 @@ describe("fold-imports plugin", function()
 
     it("should handle large import blocks", function()
       -- Skip if javascript parser is not available
-      local has_js_parser = pcall(vim.treesitter.get_parser, 0, 'javascript')
+      local has_js_parser = pcall(vim.treesitter.get_parser, 0, "javascript")
       if not has_js_parser then
         pending("javascript treesitter parser not available")
         return
       end
-      
+
       local bufnr = vim.api.nvim_create_buf(false, true)
       local import_lines = {}
-      
+
       -- Create 20 import lines
       for i = 1, 20 do
         table.insert(import_lines, string.format("import module%d from 'module%d';", i, i))
       end
       table.insert(import_lines, "")
       table.insert(import_lines, "console.log('test');")
-      
+
       vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, import_lines)
-      vim.api.nvim_buf_set_option(bufnr, 'filetype', 'javascript')
+      vim.api.nvim_buf_set_option(bufnr, "filetype", "javascript")
       vim.api.nvim_set_current_buf(bufnr)
-      
+
       -- Setup folding manually
       vim.wo.foldmethod = "manual"
       vim.wo.foldenable = true
-      
+
       plugin.fold_imports()
       vim.wait(500, function()
         return vim.fn.foldclosed(1) ~= -1
       end)
-      
+
       local fold_start = vim.fn.foldclosed(1)
-      
+
       vim.api.nvim_buf_delete(bufnr, { force = true })
-      
+
       if fold_start == -1 then
         assert.is_not_nil(plugin, "Plugin should not crash on folding attempt")
         pending("Folding may require treesitter parsers in test environment")
@@ -143,19 +143,19 @@ describe("fold-imports plugin", function()
         "function test() {",
         "  console.log('hello');",
         "  return true;",
-        "}"
+        "}",
       })
-      
-      vim.api.nvim_buf_set_option(bufnr, 'filetype', 'javascript')
+
+      vim.api.nvim_buf_set_option(bufnr, "filetype", "javascript")
       vim.api.nvim_set_current_buf(bufnr)
-      
+
       plugin.fold_imports()
       vim.wait(100)
-      
+
       local fold_start = vim.fn.foldclosed(1)
-      
+
       vim.api.nvim_buf_delete(bufnr, { force = true })
-      
+
       assert.is_true(fold_start == -1, "Expected non-import code to not be folded")
     end)
   end)
@@ -163,12 +163,12 @@ describe("fold-imports plugin", function()
   describe("Python folding", function()
     it("should fold Python import statements", function()
       -- Skip if python parser is not available
-      local has_python_parser = pcall(vim.treesitter.get_parser, 0, 'python')
+      local has_python_parser = pcall(vim.treesitter.get_parser, 0, "python")
       if not has_python_parser then
         pending("python treesitter parser not available")
         return
       end
-      
+
       local bufnr = vim.api.nvim_create_buf(false, true)
       vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {
         "import os",
@@ -176,25 +176,25 @@ describe("fold-imports plugin", function()
         "from typing import List, Dict",
         "",
         "def main():",
-        "    pass"
+        "    pass",
       })
-      
-      vim.api.nvim_buf_set_option(bufnr, 'filetype', 'python')
+
+      vim.api.nvim_buf_set_option(bufnr, "filetype", "python")
       vim.api.nvim_set_current_buf(bufnr)
-      
+
       -- Setup folding manually
       vim.wo.foldmethod = "manual"
       vim.wo.foldenable = true
-      
+
       plugin.fold_imports()
       vim.wait(500, function()
         return vim.fn.foldclosed(1) ~= -1
       end)
-      
+
       local fold_start = vim.fn.foldclosed(1)
-      
+
       vim.api.nvim_buf_delete(bufnr, { force = true })
-      
+
       if fold_start == -1 then
         assert.is_not_nil(plugin, "Plugin should not crash on folding attempt")
         pending("Folding may require treesitter parsers in test environment")
@@ -207,12 +207,12 @@ describe("fold-imports plugin", function()
   describe("Rust folding", function()
     it("should fold Rust use statements", function()
       -- Skip if rust parser is not available
-      local has_rust_parser = pcall(vim.treesitter.get_parser, 0, 'rust')
+      local has_rust_parser = pcall(vim.treesitter.get_parser, 0, "rust")
       if not has_rust_parser then
         pending("rust treesitter parser not available")
         return
       end
-      
+
       local bufnr = vim.api.nvim_create_buf(false, true)
       vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {
         "use std::collections::HashMap;",
@@ -220,26 +220,26 @@ describe("fold-imports plugin", function()
         "use tokio::fs;",
         "",
         "fn main() {",
-        "    println!(\"Hello, world!\");",
-        "}"
+        '    println!("Hello, world!");',
+        "}",
       })
-      
-      vim.api.nvim_buf_set_option(bufnr, 'filetype', 'rust')
+
+      vim.api.nvim_buf_set_option(bufnr, "filetype", "rust")
       vim.api.nvim_set_current_buf(bufnr)
-      
+
       -- Setup folding manually
       vim.wo.foldmethod = "manual"
       vim.wo.foldenable = true
-      
+
       plugin.fold_imports()
       vim.wait(500, function()
         return vim.fn.foldclosed(1) ~= -1
       end)
-      
+
       local fold_start = vim.fn.foldclosed(1)
-      
+
       vim.api.nvim_buf_delete(bufnr, { force = true })
-      
+
       if fold_start == -1 then
         assert.is_not_nil(plugin, "Plugin should not crash on folding attempt")
         pending("Folding may require treesitter parsers in test environment")
@@ -252,16 +252,16 @@ describe("fold-imports plugin", function()
   describe("plugin state management", function()
     it("should enable and disable correctly", function()
       plugin.setup({ enabled = true })
-      
+
       plugin.disable()
       -- Should be disabled now
-      
+
       plugin.enable()
       -- Should be enabled now
-      
+
       plugin.toggle()
       -- Should be disabled again
-      
+
       assert.is_not_nil(plugin) -- Basic assertion that operations completed
     end)
   end)
@@ -271,10 +271,10 @@ describe("fold-imports plugin", function()
       -- Should not crash with invalid config
       local success = pcall(function()
         plugin.setup({
-          max_import_lines = -1
+          max_import_lines = -1,
         })
       end)
-      
+
       assert.is_true(success, "Plugin should handle invalid config gracefully")
     end)
 
@@ -282,24 +282,24 @@ describe("fold-imports plugin", function()
       plugin.setup({
         languages = {
           javascript = { enabled = false },
-          typescript = { enabled = false }
-        }
+          typescript = { enabled = false },
+        },
       })
-      
+
       local bufnr = vim.api.nvim_create_buf(false, true)
       vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {
-        "import React from 'react';"
+        "import React from 'react';",
       })
-      vim.api.nvim_buf_set_option(bufnr, 'filetype', 'javascript')
+      vim.api.nvim_buf_set_option(bufnr, "filetype", "javascript")
       vim.api.nvim_set_current_buf(bufnr)
-      
+
       plugin.fold_imports()
       vim.wait(100)
-      
+
       local fold_start = vim.fn.foldclosed(1)
-      
+
       vim.api.nvim_buf_delete(bufnr, { force = true })
-      
+
       -- Should not fold when language is disabled
       assert.is_true(fold_start == -1, "Expected no folding when language is disabled")
     end)
