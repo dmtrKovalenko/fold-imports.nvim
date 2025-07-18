@@ -1,0 +1,366 @@
+*fold-imports.nvim.txt*      For Neovim >= 0.8.0     Last change: 2025 July 18
+
+==============================================================================
+Table of Contents                        *fold-imports.nvim-table-of-contents*
+
+1. fold-imports.nvim                     |fold-imports.nvim-fold-imports.nvim|
+  - Installation            |fold-imports.nvim-fold-imports.nvim-installation|
+  - Quick Start              |fold-imports.nvim-fold-imports.nvim-quick-start|
+  - Configuration          |fold-imports.nvim-fold-imports.nvim-configuration|
+  - Commands                    |fold-imports.nvim-fold-imports.nvim-commands|
+  - API                              |fold-imports.nvim-fold-imports.nvim-api|
+  - How It Works            |fold-imports.nvim-fold-imports.nvim-how-it-works|
+  - Language Support    |fold-imports.nvim-fold-imports.nvim-language-support|
+  - Troubleshooting      |fold-imports.nvim-fold-imports.nvim-troubleshooting|
+  - Requirements            |fold-imports.nvim-fold-imports.nvim-requirements|
+  - License                      |fold-imports.nvim-fold-imports.nvim-license|
+  - Author                        |fold-imports.nvim-fold-imports.nvim-author|
+2. Links                                             |fold-imports.nvim-links|
+
+==============================================================================
+1. fold-imports.nvim                     *fold-imports.nvim-fold-imports.nvim*
+
+
+
+A Neovim plugin that automatically folds import/export statements in multiple
+programming languages using Tree-sitter queries. Reduces visual clutter by
+folding verbose import blocks and showing the CODE when you open a file.
+
+
+https://github.com/user-attachments/assets/a1c54774-ee8a-4595-9653-bc400a34336a
+
+
+INSTALLATION                *fold-imports.nvim-fold-imports.nvim-installation*
+
+
+USING LAZY.NVIM ~
+
+>lua
+    {
+      "dmtrKovalenko/fold-imports.nvim",
+      opts = {},
+      event = "BufRead"
+    }
+<
+
+
+USING PACKER.NVIM ~
+
+>lua
+    use {
+      "dmtrKovalenko/fold-imports.nvim",
+      config = function()
+        require("fold_imports").setup()
+      end,
+    }
+<
+
+
+QUICK START                  *fold-imports.nvim-fold-imports.nvim-quick-start*
+
+The plugin works out of the box with zero configuration:
+
+>lua
+    require("fold_imports").setup()
+<
+
+Open any supported file and imports will be automatically folded.
+
+
+CONFIGURATION              *fold-imports.nvim-fold-imports.nvim-configuration*
+
+
+DEFAULT CONFIGURATION ~
+
+>lua
+    require("fold_imports").setup({
+      enabled = true,
+      auto_fold = true,
+      fold_level = 0,
+      -- Re-folds imports after LSP code edits (e.g. code actions)
+      auto_fold_after_code_action = true,
+      -- Custom fold text for import sections
+      custom_fold_text = true,
+      fold_text_format = "Folded imports (%d lines)",
+      -- Maximum lines for a single import statement to be considered for folding
+      max_import_lines = 50,
+    
+      languages = {
+        typescript = {
+          enabled = true,
+          parsers = { "typescript", "tsx" },
+          queries = {
+            "(import_statement) @import",
+            "(export_statement (export_clause) @export)",
+          },
+          filetypes = { "typescript", "typescriptreact" },
+          patterns = { "*.ts", "*.tsx" },
+        },
+        javascript = {
+          enabled = true,
+          parsers = { "javascript", "jsx" },
+          queries = {
+            "(import_statement) @import",
+            "(export_statement (export_clause) @export)",
+          },
+          filetypes = { "javascript", "javascriptreact" },
+          patterns = { "*.js", "*.jsx", "*.mjs" },
+        },
+        rust = {
+          enabled = true,
+          parsers = { "rust" },
+          queries = {
+            "(use_declaration) @import",
+            "(mod_item) @import",
+          },
+          filetypes = { "rust" },
+          patterns = { "*.rs" },
+        },
+        python = {
+          enabled = true,
+          parsers = { "python" },
+          queries = {
+            "(import_statement) @import",
+            "(import_from_statement) @import",
+            "(future_import_statement) @import",
+          },
+          filetypes = { "python" },
+          patterns = { "*.py", "*.pyi" },
+        },
+        c = {
+          enabled = true,
+          parsers = { "c" },
+          queries = {
+            "(preproc_include) @import",
+            "(preproc_def) @import",
+          },
+          filetypes = { "c" },
+          patterns = { "*.c", "*.h" },
+        },
+        cpp = {
+          enabled = true,
+          parsers = { "cpp" },
+          queries = {
+            "(preproc_include) @import",
+            "(preproc_def) @import",
+            "(using_declaration) @import",
+            "(namespace_alias_definition) @import",
+            "(linkage_specification) @import",
+          },
+          filetypes = { "cpp" },
+          patterns = { "*.cpp", "*.cxx", "*.cc", "*.hpp", "*.hxx", "*.hh" },
+        },
+        ocaml = {
+          enabled = true,
+          parsers = { "ocaml" },
+          queries = {
+            "(open_module) @import",
+          },
+          filetypes = { "ocaml" },
+          patterns = { "*.ml", "*.mli" },
+        },
+        zig = {
+          enabled = true,
+          parsers = { "zig" },
+          queries = {
+            '(variable_declaration (identifier) (builtin_function (builtin_identifier) @builtin (#eq? @builtin "@import"))) @import',
+          },
+          filetypes = { "zig" },
+          patterns = { "*.zig" },
+        },
+      },
+    })
+<
+
+
+CUSTOM LANGUAGE CONFIGURATION ~
+
+Disable specific languages or add custom Tree-sitter queries:
+
+>lua
+    require("fold_imports").setup({
+      languages = {
+        -- Disable TypeScript folding
+        typescript = {
+          enabled = false,
+        },
+        -- Add your language with a query
+        python = {
+          enabled = true,
+          queries = {
+            -- To see what to put here run `:InspectTree` and put cursor over the import statement
+            "(import_statement) @import",
+            "(import_from_statement) @import",
+          },
+        },
+      },
+    })
+<
+
+
+DISABLE AUTO-FOLDING ~
+
+For manual control only:
+
+>lua
+    require("fold_imports").setup({
+      auto_fold = false,
+    })
+<
+
+Then use `:FoldImports` command to fold imports manually.
+
+
+COMMANDS                        *fold-imports.nvim-fold-imports.nvim-commands*
+
+  -----------------------------------------------------------------------
+  Command              Description
+  -------------------- --------------------------------------------------
+  :FoldImports         Manually fold imports in the current buffer
+
+  :FoldImportsToggle   Enable/disable the plugin
+
+  :FoldImportsDebug    Debug Tree-sitter matches for the current buffer
+  -----------------------------------------------------------------------
+
+API                                  *fold-imports.nvim-fold-imports.nvim-api*
+
+The plugin exposes a Lua API for programmatic control:
+
+>lua
+    local fold_imports = require("fold_imports")
+    
+    -- Manually fold imports
+    fold_imports.fold_imports()
+    
+    -- Enable the plugin
+    fold_imports.enable()
+    
+    -- Disable the plugin
+    fold_imports.disable()
+    
+    -- Toggle the plugin
+    fold_imports.toggle()
+<
+
+
+HOW IT WORKS                *fold-imports.nvim-fold-imports.nvim-how-it-works*
+
+1. **Tree-sitter Integration**Uses Tree-sitter parsers to accurately identify import statements in different languages
+2. **Smart Grouping**Groups adjacent import statements, ignoring empty lines between them
+3. **Intelligent Folding**Creates folds for:- Multi-line import groups
+- Multiple separate import groups
+- Single-line imports when there are multiple imports total
+
+
+4. **LSP Integration**Monitors LSP text edits and re-folds imports when changes occur near existing import folds
+5. **Performance**Uses retries with exponential backoff and optimizes the runtime
+
+
+LANGUAGE SUPPORT        *fold-imports.nvim-fold-imports.nvim-language-support*
+
+
+TYPESCRIPT/JAVASCRIPT ~
+
+- **Supported**Import declarations, export statements with export clauses
+- **Examples**`import { foo } from 'bar'`, `export { baz }`
+
+
+RUST ~
+
+- **Supported**Use declarations, module items
+- **Examples**`use std::collections::HashMap;`, `mod utils;`
+
+
+PYTHON ~
+
+- **Supported**Import statements, from-import statements, future imports
+- **Examples**`import os`, `from typing import List`, `from __future__ import annotations`
+
+
+C/C++ ~
+
+- **Supported**Preprocessor includes, defines, using declarations (C++), namespace aliases (C++)
+- **Examples**`#include <stdio.h>`, `using namespace std;`
+
+
+OCAML ~
+
+- **Supported**Open module statements
+- **Examples**`open List`, `open Printf`
+
+
+ZIG ~
+
+- **Supported**Variable declarations with @import builtin
+- **Examples**`const std = @import("std");`
+
+
+TROUBLESHOOTING          *fold-imports.nvim-fold-imports.nvim-troubleshooting*
+
+
+IMPORTS NOT FOLDING ~
+
+1. **Check Tree-sitter parser**Ensure the required Tree-sitter parser is
+installed:
+
+>vim
+    :TSInstall typescript javascript rust python c cpp ocaml zig
+<
+
+
+2. **Debug Tree-sitter matches**Use the debug command to see what’s being
+detected:
+
+>vim
+    :FoldImportsDebug
+<
+
+
+3. **Verify filetype**Check that your file has the correct filetype:
+
+>vim
+    :set filetype?
+<
+
+
+
+
+CUSTOM QUERIES NOT WORKING ~
+
+Tree-sitter queries are language-specific. Use `:TSPlayground` to explore the
+syntax tree and write custom queries. The query format follows Tree-sitter
+query syntax.
+
+
+REQUIREMENTS                *fold-imports.nvim-fold-imports.nvim-requirements*
+
+- **Neovim**>= 0.8.0
+- **Tree-sitter**Built-in Neovim Tree-sitter support
+- **Parsers**Language-specific Tree-sitter parsers (installed via `:TSInstall`)
+
+
+LICENSE                          *fold-imports.nvim-fold-imports.nvim-license*
+
+MIT License - see LICENSE <LICENSE> file for details.
+
+
+AUTHOR                            *fold-imports.nvim-fold-imports.nvim-author*
+
+Created by @neogoose_btw <https://x.com/neogoose_btw>
+
+Built with Tree-sitter <https://tree-sitter.github.io/> for accurate parsing.
+Template based on nvim-plugin-template
+<https://github.com/ellisonleao/nvim-plugin-template>.
+
+==============================================================================
+2. Links                                             *fold-imports.nvim-links*
+
+1. *Lua*: https://img.shields.io/badge/Made%20with%20Lua-blueviolet.svg?style=for-the-badge&logo=lua
+2. *Neovim*: https://img.shields.io/badge/NeoVim-%2357A143.svg?&style=for-the-badge&logo=neovim&logoColor=white
+3. *@import*: 
+4. *@neogoose_btw*: 
+
+Generated by panvimdoc <https://github.com/kdheepak/panvimdoc>
+
+vim:tw=78:ts=8:noet:ft=help:norl:
