@@ -3,7 +3,10 @@
 ![Lua](https://img.shields.io/badge/Made%20with%20Lua-blueviolet.svg?style=for-the-badge&logo=lua)
 ![Neovim](https://img.shields.io/badge/NeoVim-%2357A143.svg?&style=for-the-badge&logo=neovim&logoColor=white)
 
-A Neovim plugin that automatically folds import/export statements in multiple programming languages using Tree-sitter queries. Reduces visual clutter by folding verbose import blocks while maintaining code organization.
+A Neovim plugin that automatically folds import/export statements in multiple programming languages using Tree-sitter queries. Reduces visual clutter by folding verbose import blocks and showing the CODE when you open a file.
+
+https://github.com/user-attachments/assets/a1c54774-ee8a-4595-9653-bc400a34336a
+
 
 ## Installation
 
@@ -11,10 +14,9 @@ A Neovim plugin that automatically folds import/export statements in multiple pr
 
 ```lua
 {
-  "neogoose/fold-imports.nvim",
-  config = function()
-    require("fold_imports").setup()
-  end,
+  "dmtrKovalenko/fold-imports.nvim",
+  opts = {},
+  event = "BufRead"
 }
 ```
 
@@ -22,7 +24,7 @@ A Neovim plugin that automatically folds import/export statements in multiple pr
 
 ```lua
 use {
-  "neogoose/fold-imports.nvim",
+  "dmtrKovalenko/fold-imports.nvim",
   config = function()
     require("fold_imports").setup()
   end,
