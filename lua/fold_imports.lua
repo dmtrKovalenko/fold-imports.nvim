@@ -96,6 +96,16 @@ local default_config = {
       filetypes = { "python" },
       patterns = { "*.py", "*.pyi" },
     },
+    go = {
+      enabled = true,
+      parsers = { "go" },
+      queries = {
+        "(import_declaration) @import", -- For import blocks
+        "(import_spec) @import",        -- For individual imports within blocks
+      },
+      filetypes = { "go" },
+      patterns = { "*.go" },
+    },
   },
 }
 
@@ -562,7 +572,7 @@ function M._get_fold_text()
     local fill_char = vim.opt.fillchars:get().fold or "-"
 
     return string.format("+%s %s ", string.rep(fill_char, 2), fold_text)
-      .. string.rep(fill_char, math.max(0, fill_count))
+        .. string.rep(fill_char, math.max(0, fill_count))
   else
     return vim.fn.foldtext()
   end
