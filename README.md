@@ -3,10 +3,9 @@
 ![Lua](https://img.shields.io/badge/Made%20with%20Lua-blueviolet.svg?style=for-the-badge&logo=lua)
 ![Neovim](https://img.shields.io/badge/NeoVim-%2357A143.svg?&style=for-the-badge&logo=neovim&logoColor=white)
 
-A Neovim plugin that automatically folds import/export statements in multiple programming languages using Tree-sitter queries. Reduces visual clutter by folding verbose import blocks and showing the CODE when you open a file.
+A Neovim plugin that automatically folds import/export statements in multiple programming languages using treesitter. Reduces visual clutter by folding verbose import blocks and showing the CODE.
 
 https://github.com/user-attachments/assets/a1c54774-ee8a-4595-9653-bc400a34336a
-
 
 ## Installation
 
@@ -291,5 +290,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 Created by [@neogoose_btw](https://x.com/neogoose_btw)
 
-Built with [Tree-sitter](https://tree-sitter.github.io/) for accurate parsing. Template based on [nvim-plugin-template](https://github.com/ellisonleao/nvim-plugin-template).
-
+Built with [tree-sitter](https://tree-sitter.github.io/) for accurate parsing. Template based on [nvim-plugin-template](https://github.com/ellisonleao/nvim-plugin-template).
