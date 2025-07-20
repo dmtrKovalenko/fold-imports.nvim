@@ -140,6 +140,16 @@ require("fold_imports").setup({
       filetypes = { "zig" },
       patterns = { "*.zig" },
     },
+    go = {
+      enabled = true,
+      parsers = { "go" },
+      queries = {
+        "(import_declaration) @import",
+        "(import_spec) @import"
+      },
+      filetypes = { "go" },
+      patterns = { "*.go" },
+    },
   },
 })
 ```
@@ -250,6 +260,11 @@ fold_imports.toggle()
 
 - **Supported**: Variable declarations with @import builtin
 - **Examples**: `const std = @import("std");`
+
+### go
+
+- **Supported**: Import statements
+- **Examples**: `import fmt`
 
 ## Troubleshooting
 
