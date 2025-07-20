@@ -1,4 +1,4 @@
-*fold-imports.nvim.txt*      For Neovim >= 0.8.0     Last change: 2025 July 18
+*fold-imports.nvim.txt*      For Neovim >= 0.8.0     Last change: 2025 July 20
 
 ==============================================================================
 Table of Contents                        *fold-imports.nvim-table-of-contents*
@@ -23,8 +23,8 @@ Table of Contents                        *fold-imports.nvim-table-of-contents*
 
 
 A Neovim plugin that automatically folds import/export statements in multiple
-programming languages using Tree-sitter queries. Reduces visual clutter by
-folding verbose import blocks and showing the CODE when you open a file.
+programming languages using treesitter. Reduces visual clutter by folding
+verbose import blocks and showing the CODE.
 
 
 https://github.com/user-attachments/assets/a1c54774-ee8a-4595-9653-bc400a34336a
@@ -349,7 +349,7 @@ AUTHOR                            *fold-imports.nvim-fold-imports.nvim-author*
 
 Created by @neogoose_btw <https://x.com/neogoose_btw>
 
-Built with Tree-sitter <https://tree-sitter.github.io/> for accurate parsing.
+Built with tree-sitter <https://tree-sitter.github.io/> for accurate parsing.
 Template based on nvim-plugin-template
 <https://github.com/ellisonleao/nvim-plugin-template>.
 
