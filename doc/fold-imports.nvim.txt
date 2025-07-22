@@ -264,6 +264,7 @@ HOW IT WORKS                *fold-imports.nvim-fold-imports.nvim-how-it-works*
 
 4. **LSP Integration**Monitors LSP text edits and re-folds imports when changes occur near existing import folds
 5. **Performance**Uses retries with exponential backoff and optimizes the runtime
+6. Git Conflicts detection: Detects git conflicts using various popular plugins like git-conflict.nvim <https://github.com/akinsho/git-conflict.nvim>
 
 
 LANGUAGE SUPPORT        *fold-imports.nvim-fold-imports.nvim-language-support*
