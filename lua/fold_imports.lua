@@ -170,6 +170,44 @@ local function get_existing_folds(bufnr)
   return folds
 end
 
+local function remove_import_folds(bufnr)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+
+  if not vim.api.nvim_buf_is_valid(bufnr) then
+    return
+  end
+
+  local import_fold_ranges = vim.b[bufnr].import_fold_ranges
+  if not import_fold_ranges or #import_fold_ranges == 0 then
+    return
+  end
+
+  -- Remove only the import folds, preserve other manual folds
+  local ok, err = pcall(vim.api.nvim_buf_call, bufnr, function()
+    -- Process ranges in reverse order to avoid line number shifts
+    for i = #import_fold_ranges, 1, -1 do
+      local range = import_fold_ranges[i]
+      local start_line, end_line = range[1], range[2]
+      -- Delete fold only if it still exists at these exact lines
+      if vim.fn.foldclosed(start_line) == start_line and vim.fn.foldclosedend(start_line) == end_line then
+        -- Open the fold first
+        pcall(vim.cmd, string.format("%d,%dfoldopen", start_line, end_line))
+        -- Navigate to the fold and delete it using zD (delete all folds in range)
+        vim.fn.cursor(start_line, 1)
+        pcall(vim.cmd, "normal! zD")
+      end
+    end
+  end)
+
+  if not ok then
+    -- Silently handle errors - fold removal is not critical
+    -- vim.notify("Error removing import folds: " .. tostring(err), vim.log.levels.DEBUG)
+  end
+
+  -- Clear stored import fold ranges
+  vim.b[bufnr].import_fold_ranges = nil
+end
+
 -- Checks if text edits are within existing import section +- 3 lines
 local function edits_within_existing_imports(text_edits, bufnr)
   if not text_edits or #text_edits == 0 then
@@ -503,7 +541,25 @@ function M.setup(user_config)
 
   vim.api.nvim_create_user_command("FoldImportsToggle", function()
     config.enabled = not config.enabled
-    setup_autocommands()
+
+    if config.enabled then
+      -- Re-enable: setup autocommands and refold imports in current buffer
+      setup_autocommands()
+      local bufnr = vim.api.nvim_get_current_buf()
+      local lang_config = get_language_config(vim.bo[bufnr].filetype)
+      if lang_config then
+        setup_and_fold()
+      end
+    else
+      -- Disable: remove import folds from current buffer and clear autocommands
+      local bufnr = vim.api.nvim_get_current_buf()
+      local lang_config = get_language_config(vim.bo[bufnr].filetype)
+      if lang_config then
+        remove_import_folds(bufnr)
+      end
+      setup_autocommands()
+    end
+
     print("FoldImports " .. (config.enabled and "enabled" or "disabled"))
   end, { desc = "Toggle fold imports plugin" })
 
@@ -534,16 +590,41 @@ end
 function M.enable()
   config.enabled = true
   setup_autocommands()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local lang_config = get_language_config(vim.bo[bufnr].filetype)
+  if lang_config then
+    setup_and_fold()
+  end
 end
 
 function M.disable()
   config.enabled = false
+  local bufnr = vim.api.nvim_get_current_buf()
+  local lang_config = get_language_config(vim.bo[bufnr].filetype)
+  if lang_config then
+    remove_import_folds(bufnr)
+  end
   setup_autocommands()
 end
 
 function M.toggle()
   config.enabled = not config.enabled
-  setup_autocommands()
+
+  if config.enabled then
+    setup_autocommands()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local lang_config = get_language_config(vim.bo[bufnr].filetype)
+    if lang_config then
+      setup_and_fold()
+    end
+  else
+    local bufnr = vim.api.nvim_get_current_buf()
+    local lang_config = get_language_config(vim.bo[bufnr].filetype)
+    if lang_config then
+      remove_import_folds(bufnr)
+    end
+    setup_autocommands()
+  end
 end
 
 function M._get_fold_text()
