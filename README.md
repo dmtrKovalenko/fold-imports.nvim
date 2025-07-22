@@ -227,6 +227,7 @@ fold_imports.toggle()
    - Single-line imports when there are multiple imports total
 4. **LSP Integration**: Monitors LSP text edits and re-folds imports when changes occur near existing import folds
 5. **Performance**: Uses retries with exponential backoff and optimizes the runtime
+6. Git Conflicts detection: Detects git conflicts using various popular plugins like [git-conflict.nvim](https://github.com/akinsho/git-conflict.nvim)
 
 ## Language Support
 

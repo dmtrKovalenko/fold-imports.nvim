@@ -489,14 +489,22 @@ local function setup_autocommands()
     vim.api.nvim_del_augroup_by_id(fold_imports_group)
   end
 
-  fold_imports_group = vim.api.nvim_create_augroup("FoldImports", { clear = true })
-
   if not config.enabled or not config.auto_fold then
     return
   end
 
+  fold_imports_group = vim.api.nvim_create_augroup("FoldImports", { clear = true })
+
   local patterns = get_all_patterns()
   local filetypes = get_all_filetypes()
+
+  vim.api.nvim_create_autocmd("User", {
+    pattern = "GitConflictDetected",
+    group = fold_imports_group,
+    callback = function(opts)
+      remove_import_folds(opts.bufnr)
+    end,
+  })
 
   if #patterns > 0 then
     vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile", "BufWinEnter" }, {
