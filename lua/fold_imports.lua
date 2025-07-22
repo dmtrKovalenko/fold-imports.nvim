@@ -69,7 +69,6 @@ local default_config = {
       enabled = true,
       parsers = { "ocaml" },
       queries = {
-        -- Match open statements
         "(open_module) @import",
       },
       filetypes = { "ocaml" },
@@ -79,7 +78,6 @@ local default_config = {
       enabled = true,
       parsers = { "zig" },
       queries = {
-        -- Match variable declarations with @import builtin calls
         '(variable_declaration (identifier) (builtin_function (builtin_identifier) @builtin (#eq? @builtin "@import"))) @import',
       },
       filetypes = { "zig" },
@@ -95,6 +93,16 @@ local default_config = {
       },
       filetypes = { "python" },
       patterns = { "*.py", "*.pyi" },
+    },
+    go = {
+      enabled = true,
+      parsers = { "go" },
+      queries = {
+        "(import_declaration) @import", -- For import blocks
+        "(import_spec) @import", -- For individual imports within blocks
+      },
+      filetypes = { "go" },
+      patterns = { "*.go" },
     },
   },
 }

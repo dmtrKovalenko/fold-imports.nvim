@@ -45,18 +45,17 @@ Open any supported file and imports will be automatically folded.
 ### Default Configuration
 
 ```lua
-require("fold_imports").setup({
+require("fold_imports").setup({{
   enabled = true,
   auto_fold = true,
   fold_level = 0,
-  -- Re-folds imports after LSP code edits (e.g. code actions)
+  -- refolds imports after lsp code edits (e.g. code actions)
   auto_fold_after_code_action = true,
-  -- Custom fold text for import sections
+  -- custom fold text for import sections
   custom_fold_text = true,
   fold_text_format = "Folded imports (%d lines)",
-  -- Maximum lines for a single import statement to be considered for folding
+  -- maximum lines for a single import statement to be considered for folding
   max_import_lines = 50,
-
   languages = {
     typescript = {
       enabled = true,
@@ -87,17 +86,6 @@ require("fold_imports").setup({
       },
       filetypes = { "rust" },
       patterns = { "*.rs" },
-    },
-    python = {
-      enabled = true,
-      parsers = { "python" },
-      queries = {
-        "(import_statement) @import",
-        "(import_from_statement) @import",
-        "(future_import_statement) @import",
-      },
-      filetypes = { "python" },
-      patterns = { "*.py", "*.pyi" },
     },
     c = {
       enabled = true,
@@ -140,8 +128,29 @@ require("fold_imports").setup({
       filetypes = { "zig" },
       patterns = { "*.zig" },
     },
+    python = {
+      enabled = true,
+      parsers = { "python" },
+      queries = {
+        "(import_statement) @import",
+        "(import_from_statement) @import",
+        "(future_import_statement) @import",
+      },
+      filetypes = { "python" },
+      patterns = { "*.py", "*.pyi" },
+    },
+    go = {
+      enabled = true,
+      parsers = { "go" },
+      queries = {
+        "(import_declaration) @import", -- For import blocks
+        "(import_spec) @import", -- For individual imports within blocks
+      },
+      filetypes = { "go" },
+      patterns = { "*.go" },
+    },
   },
-})
+}})
 ```
 
 ### Custom Language Configuration
@@ -250,6 +259,11 @@ fold_imports.toggle()
 
 - **Supported**: Variable declarations with @import builtin
 - **Examples**: `const std = @import("std");`
+
+### go
+
+- **Supported**: Import statements
+- **Examples**: `import fmt`
 
 ## Troubleshooting
 
