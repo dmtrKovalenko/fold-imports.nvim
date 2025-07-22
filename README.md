@@ -149,6 +149,15 @@ require("fold_imports").setup({{
       filetypes = { "go" },
       patterns = { "*.go" },
     },
+    dart = {
+        enabled = true,
+        parsers = { "dart" },
+        queries = {
+            "(import_or_export) @import",
+        },
+        filetypes = { "dart" },
+        patterns = { "*.dart" },
+    },
   },
 }})
 ```
