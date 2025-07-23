@@ -487,7 +487,7 @@ local function fold_imports_for_buffer(attempts)
   for _, group in ipairs(fold_groups) do
     total_import_lines = total_import_lines + (group[2] - group[1] + 1)
   end
-  
+
   local import_percentage = total_import_lines / file_line_count
   if import_percentage > 0.5 then
     -- Don't fold if imports take up more than 50% of the file
