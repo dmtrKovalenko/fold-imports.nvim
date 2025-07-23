@@ -18,6 +18,8 @@ local default_config = {
       queries = {
         "(import_statement) @import",
         "(export_statement (export_clause) @export)",
+        "((comment)+ @comment . (import_statement) @import) @import_with_comment",
+        "((comment)+ @comment . (export_statement (export_clause) @export)) @export_with_comment",
       },
       filetypes = { "typescript", "typescriptreact" },
       patterns = { "*.ts", "*.tsx" },
@@ -28,6 +30,8 @@ local default_config = {
       queries = {
         "(import_statement) @import",
         "(export_statement (export_clause) @export)",
+        "((comment)+ @comment . (import_statement) @import) @import_with_comment",
+        "((comment)+ @comment . (export_statement (export_clause) @export)) @export_with_comment",
       },
       filetypes = { "javascript", "javascriptreact" },
       patterns = { "*.js", "*.jsx", "*.mjs" },
@@ -40,6 +44,25 @@ local default_config = {
         "(mod_item) @import",
         "((attribute_item)+ @attribute . (use_declaration) @import) @import_with_attr",
         "((attribute_item)+ @attribute . (mod_item) @import) @import_with_attr",
+        "((line_comment)+ @comment . (use_declaration) @import) @import_with_comment",
+        "((line_comment)+ @comment . (mod_item) @import) @import_with_comment",
+        "((block_comment)+ @comment . (use_declaration) @import) @import_with_comment",
+        "((block_comment)+ @comment . (mod_item) @import) @import_with_comment",
+        -- Comment above attribute above import
+        "((line_comment)+ @comment . (attribute_item)+ @attribute . (use_declaration) @import) @import_with_comment_attr",
+        "((line_comment)+ @comment . (attribute_item)+ @attribute . (mod_item) @import) @import_with_comment_attr",
+        "((block_comment)+ @comment . (attribute_item)+ @attribute . (use_declaration) @import) @import_with_comment_attr",
+        "((block_comment)+ @comment . (attribute_item)+ @attribute . (mod_item) @import) @import_with_comment_attr",
+        -- Attribute above comment above import
+        "((attribute_item)+ @attribute . (line_comment)+ @comment . (use_declaration) @import) @import_with_attr_comment",
+        "((attribute_item)+ @attribute . (line_comment)+ @comment . (mod_item) @import) @import_with_attr_comment",
+        "((attribute_item)+ @attribute . (block_comment)+ @comment . (use_declaration) @import) @import_with_attr_comment",
+        "((attribute_item)+ @attribute . (block_comment)+ @comment . (mod_item) @import) @import_with_attr_comment",
+        -- Mixed comments and attributes (interleaved)
+        "((line_comment | attribute_item)+ @mixed . (use_declaration) @import) @import_with_mixed",
+        "((line_comment | attribute_item)+ @mixed . (mod_item) @import) @import_with_mixed",
+        "((block_comment | attribute_item)+ @mixed . (use_declaration) @import) @import_with_mixed",
+        "((block_comment | attribute_item)+ @mixed . (mod_item) @import) @import_with_mixed",
       },
       filetypes = { "rust" },
       patterns = { "*.rs" },
@@ -50,6 +73,8 @@ local default_config = {
       queries = {
         "(preproc_include) @import",
         "(preproc_def) @import",
+        "((comment)+ @comment . (preproc_include) @import) @import_with_comment",
+        "((comment)+ @comment . (preproc_def) @import) @import_with_comment",
       },
       filetypes = { "c" },
       patterns = { "*.c", "*.h" },
@@ -63,6 +88,11 @@ local default_config = {
         "(using_declaration) @import",
         "(namespace_alias_definition) @import",
         "(linkage_specification) @import",
+        "((comment)+ @comment . (preproc_include) @import) @import_with_comment",
+        "((comment)+ @comment . (preproc_def) @import) @import_with_comment",
+        "((comment)+ @comment . (using_declaration) @import) @import_with_comment",
+        "((comment)+ @comment . (namespace_alias_definition) @import) @import_with_comment",
+        "((comment)+ @comment . (linkage_specification) @import) @import_with_comment",
       },
       filetypes = { "cpp" },
       patterns = { "*.cpp", "*.cxx", "*.cc", "*.hpp", "*.hxx", "*.hh" },
@@ -72,6 +102,7 @@ local default_config = {
       parsers = { "ocaml" },
       queries = {
         "(open_module) @import",
+        "((comment)+ @comment . (open_module) @import) @import_with_comment",
       },
       filetypes = { "ocaml" },
       patterns = { "*.ml", "*.mli" },
@@ -81,6 +112,7 @@ local default_config = {
       parsers = { "zig" },
       queries = {
         '(variable_declaration (identifier) (builtin_function (builtin_identifier) @builtin (#eq? @builtin "@import"))) @import',
+        '((line_comment)+ @comment . (variable_declaration (identifier) (builtin_function (builtin_identifier) @builtin (#eq? @builtin "@import"))) @import) @import_with_comment',
       },
       filetypes = { "zig" },
       patterns = { "*.zig" },
@@ -92,6 +124,9 @@ local default_config = {
         "(import_statement) @import",
         "(import_from_statement) @import",
         "(future_import_statement) @import",
+        "((comment)+ @comment . (import_statement) @import) @import_with_comment",
+        "((comment)+ @comment . (import_from_statement) @import) @import_with_comment",
+        "((comment)+ @comment . (future_import_statement) @import) @import_with_comment",
       },
       filetypes = { "python" },
       patterns = { "*.py", "*.pyi" },
@@ -102,6 +137,8 @@ local default_config = {
       queries = {
         "(import_declaration) @import", -- For import blocks
         "(import_spec) @import", -- For individual imports within blocks
+        "((comment)+ @comment . (import_declaration) @import) @import_with_comment",
+        "((comment)+ @comment . (import_spec) @import) @import_with_comment",
       },
       filetypes = { "go" },
       patterns = { "*.go" },
@@ -111,6 +148,7 @@ local default_config = {
       parsers = { "dart" },
       queries = {
         "(import_or_export) @import",
+        "((comment)+ @comment . (import_or_export) @import) @import_with_comment",
       },
       filetypes = { "dart" },
       patterns = { "*.dart" },
