@@ -38,6 +38,8 @@ local default_config = {
       queries = {
         "(use_declaration) @import",
         "(mod_item) @import",
+        "((attribute_item)+ @attribute . (use_declaration) @import) @import_with_attr",
+        "((attribute_item)+ @attribute . (mod_item) @import) @import_with_attr",
       },
       filetypes = { "rust" },
       patterns = { "*.rs" },
