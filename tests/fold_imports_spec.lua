@@ -557,7 +557,11 @@ describe("fold-imports plugin", function()
         '#[cfg(feature = "serde")]',
         "// Serialization support",
         "use serde::{Deserialize, Serialize};",
+<<<<<<< HEAD
         '#[cfg(test)]',
+=======
+        "#[cfg(test)]",
+>>>>>>> 066d523 (feat: Fold comments if they are attached to the import statement)
         "// Test utilities",
         "use std::collections::HashMap;",
         "",
@@ -596,11 +600,19 @@ describe("fold-imports plugin", function()
         "// JSON serialization",
         '#[cfg(feature = "serde")]',
         "// Only when serde is enabled",
+<<<<<<< HEAD
         '#[allow(unused_imports)]',
         "use serde::{Deserialize, Serialize};",
         "// Standard library imports",
         "use std::collections::HashMap;",
         '#[cfg(test)]',
+=======
+        "#[allow(unused_imports)]",
+        "use serde::{Deserialize, Serialize};",
+        "// Standard library imports",
+        "use std::collections::HashMap;",
+        "#[cfg(test)]",
+>>>>>>> 066d523 (feat: Fold comments if they are attached to the import statement)
         "// Test-only imports",
         "use std::env;",
         "",
@@ -623,7 +635,14 @@ describe("fold-imports plugin", function()
       if fold_start == -1 then
         pending("Complex interleaved folding may require treesitter parsers in test environment")
       else
+<<<<<<< HEAD
         assert.is_true(fold_start ~= -1, "Expected Rust imports with complex interleaved comments and attributes to be folded")
+=======
+        assert.is_true(
+          fold_start ~= -1,
+          "Expected Rust imports with complex interleaved comments and attributes to be folded"
+        )
+>>>>>>> 066d523 (feat: Fold comments if they are attached to the import statement)
       end
     end)
 
