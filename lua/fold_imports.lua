@@ -443,6 +443,19 @@ local function fold_imports_for_buffer(attempts)
 
   local fold_groups = group_imports_ignore_empty_lines(bufnr, import_ranges)
 
+  -- Check if import regions take up more than 50% of the file
+  local file_line_count = vim.api.nvim_buf_line_count(bufnr)
+  local total_import_lines = 0
+  for _, group in ipairs(fold_groups) do
+    total_import_lines = total_import_lines + (group[2] - group[1] + 1)
+  end
+  
+  local import_percentage = total_import_lines / file_line_count
+  if import_percentage > 0.5 then
+    -- Don't fold if imports take up more than 50% of the file
+    return
+  end
+
   local import_fold_ranges = {}
   for _, group in ipairs(fold_groups) do
     -- Create fold if:
