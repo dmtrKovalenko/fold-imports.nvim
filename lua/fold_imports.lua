@@ -373,7 +373,7 @@ local function debug_treesitter_matches(bufnr, lang_config, parser_name)
     local ok_query, query = pcall(vim.treesitter.query.parse, parser_name, query_string)
     if ok_query and query then
       local count = 0
-      for _, node, _ in query:iter_captures(root, bufnr) do
+      for _, node in query:iter_captures(root, bufnr) do
         if node and node.range then
           local ok_range, start_row, start_col, end_row, end_col = pcall(node.range, node)
           if ok_range then
@@ -468,7 +468,7 @@ local function fold_imports_for_buffer(attempts)
   for _, query_string in ipairs(lang_config.queries) do
     local ok_query, query = pcall(vim.treesitter.query.parse, parser_name, query_string)
     if ok_query and query then
-      for _, node, _ in query:iter_captures(root, bufnr) do
+      for _, node in query:iter_captures(root, bufnr) do
         if node and node.range then
           local ok_range, start_row, _, end_row, _ = pcall(node.range, node)
           if ok_range and start_row and end_row then
