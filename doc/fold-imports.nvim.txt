@@ -1,4 +1,5 @@
-*fold-imports.nvim.txt*      For Neovim >= 0.8.0     Last change: 2025 July 23
+*fold-imports.nvim.txt*
+                          For Neovim >= 0.8.0    Last change: 2026 November 13
 
 ==============================================================================
 Table of Contents                        *fold-imports.nvim-table-of-contents*
@@ -247,16 +248,16 @@ The plugin exposes a Lua API for programmatic control:
 
 >lua
     local fold_imports = require("fold_imports")
-    
+
     -- Manually fold imports
     fold_imports.fold_imports()
-    
+
     -- Enable the plugin
     fold_imports.enable()
-    
+
     -- Disable the plugin
     fold_imports.disable()
-    
+
     -- Toggle the plugin
     fold_imports.toggle()
 <
@@ -264,15 +265,15 @@ The plugin exposes a Lua API for programmatic control:
 
 HOW IT WORKS                *fold-imports.nvim-fold-imports.nvim-how-it-works*
 
-1. **Tree-sitter Integration**Uses Tree-sitter parsers to accurately identify import statements in different languages
-2. **Smart Grouping**Groups adjacent import statements, ignoring empty lines between them
-3. **Intelligent Folding**Creates folds for:- Multi-line import groups
+1. **Tree-sitter Integration**: Uses Tree-sitter parsers to accurately identify import statements in different languages
+2. **Smart Grouping**: Groups adjacent import statements, ignoring empty lines between them
+3. **Intelligent Folding**: Creates folds for:- Multi-line import groups
 - Multiple separate import groups
 - Single-line imports when there are multiple imports total
 
 
-4. **LSP Integration**Monitors LSP text edits and re-folds imports when changes occur near existing import folds
-5. **Performance**Uses retries with exponential backoff and optimizes the runtime
+4. **LSP Integration**: Monitors LSP text edits and re-folds imports when changes occur near existing import folds
+5. **Performance**: Uses retries with exponential backoff and optimizes the runtime
 6. Git Conflicts detection: Detects git conflicts using various popular plugins like git-conflict.nvim <https://github.com/akinsho/git-conflict.nvim>
 
 
@@ -281,44 +282,44 @@ LANGUAGE SUPPORT        *fold-imports.nvim-fold-imports.nvim-language-support*
 
 TYPESCRIPT/JAVASCRIPT ~
 
-- **Supported**Import declarations, export statements with export clauses
-- **Examples**`import { foo } from 'bar'`, `export { baz }`
+- **Supported**: Import declarations, export statements with export clauses
+- **Examples**: `import { foo } from 'bar'`, `export { baz }`
 
 
 RUST ~
 
-- **Supported**Use declarations, module items
-- **Examples**`use std::collections::HashMap;`, `mod utils;`
+- **Supported**: Use declarations, module items
+- **Examples**: `use std::collections::HashMap;`, `mod utils;`
 
 
 PYTHON ~
 
-- **Supported**Import statements, from-import statements, future imports
-- **Examples**`import os`, `from typing import List`, `from __future__ import annotations`
+- **Supported**: Import statements, from-import statements, future imports
+- **Examples**: `import os`, `from typing import List`, `from __future__ import annotations`
 
 
 C/C++ ~
 
-- **Supported**Preprocessor includes, defines, using declarations (C++), namespace aliases (C++)
-- **Examples**`#include <stdio.h>`, `using namespace std;`
+- **Supported**: Preprocessor includes, defines, using declarations (C++), namespace aliases (C++)
+- **Examples**: `#include <stdio.h>`, `using namespace std;`
 
 
 OCAML ~
 
-- **Supported**Open module statements
-- **Examples**`open List`, `open Printf`
+- **Supported**: Open module statements
+- **Examples**: `open List`, `open Printf`
 
 
 ZIG ~
 
-- **Supported**Variable declarations with @import builtin
-- **Examples**`const std = @import("std");`
+- **Supported**: Variable declarations with @import builtin
+- **Examples**: `const std = @import("std");`
 
 
 GO ~
 
-- **Supported**Import statements
-- **Examples**`import fmt`
+- **Supported**: Import statements
+- **Examples**: `import fmt`
 
 
 TROUBLESHOOTING          *fold-imports.nvim-fold-imports.nvim-troubleshooting*
@@ -326,7 +327,7 @@ TROUBLESHOOTING          *fold-imports.nvim-fold-imports.nvim-troubleshooting*
 
 IMPORTS NOT FOLDING ~
 
-1. **Check Tree-sitter parser**Ensure the required Tree-sitter parser is
+1. **Check Tree-sitter parser**: Ensure the required Tree-sitter parser is
 installed:
 
 >vim
@@ -334,7 +335,7 @@ installed:
 <
 
 
-2. **Debug Tree-sitter matches**Use the debug command to see what’s being
+2. **Debug Tree-sitter matches**: Use the debug command to see what’s being
 detected:
 
 >vim
@@ -342,7 +343,7 @@ detected:
 <
 
 
-3. **Verify filetype**Check that your file has the correct filetype:
+3. **Verify filetype**: Check that your file has the correct filetype:
 
 >vim
     :set filetype?
@@ -360,9 +361,9 @@ query syntax.
 
 REQUIREMENTS                *fold-imports.nvim-fold-imports.nvim-requirements*
 
-- **Neovim**>= 0.8.0
-- **Tree-sitter**Built-in Neovim Tree-sitter support
-- **Parsers**Language-specific Tree-sitter parsers (installed via `:TSInstall`)
+- **Neovim**: >= 0.8.0
+- **Tree-sitter**: Built-in Neovim Tree-sitter support
+- **Parsers**: Language-specific Tree-sitter parsers (installed via `:TSInstall`)
 
 
 LICENSE                          *fold-imports.nvim-fold-imports.nvim-license*
