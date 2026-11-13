@@ -312,6 +312,6 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Author
 
-Created by [@neogoose_btw](https://x.com/neogoose_btw)
+Created by [@0xfflock](https://x.com/0xfflock)
 
 Built with [tree-sitter](https://tree-sitter.github.io/) for accurate parsing. Template based on [nvim-plugin-template](https://github.com/ellisonleao/nvim-plugin-template).
